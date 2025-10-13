@@ -1,0 +1,4 @@
+br\com\aj\integrationtests\testcontainers\AbstractIntegrationTest.class
+br\com\aj\integrationtests\testcontainers\AbstractIntegrationTest$Initializer.class
+br\com\aj\config\TestConfigs.class
+br\com\aj\integrationtests\swagger\SwaggerIntegrationTest.class
