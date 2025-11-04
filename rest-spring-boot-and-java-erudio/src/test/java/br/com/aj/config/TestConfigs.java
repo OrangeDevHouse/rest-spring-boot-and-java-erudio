@@ -1,5 +1,5 @@
 package br.com.aj.config;
 
 public interface TestConfigs {
-    int SERVER_PORT = 8888;
+    int SERVER_PORT = 80;
 }

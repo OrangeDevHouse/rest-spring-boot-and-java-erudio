@@ -30,7 +30,13 @@ public class Person implements Serializable {
     @Column(nullable = false, length = 6)
     private String gender;
 
-    public Person() {}
+    public Person() {
+        this.id = 1l;
+        this.firstName = "Jubileu";
+        this.lastName = "Sarseu";
+        this.address = "seila";
+        this.gender = "M";
+    }
 
     public Long getId() {
         return id;

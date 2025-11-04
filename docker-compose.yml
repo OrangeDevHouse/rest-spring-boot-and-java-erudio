@@ -1,36 +1,41 @@
 version: '3.4'
 
-services:
-  db:
-    image: mysql:9.1.0
-    restart: always
-    environment:
-      TZ: America/Sao_Paulo
-      MYSQL_ROOT_PASSWORD: 1234
-      MYSQL_USER: docker
-      MYSQL_PASSWORD: 1234
-      MYSQL_DATABASE: rest_with_spring_boot_erudio
+services:                        # Declara a seção onde os serviços (containers) serão definidos
+
+  db:                           # Nome do serviço do banco de dados
+    image: mysql:9.1.0          # Imagem do MySQL (⚠️ essa versão não existe — use mysql:8.0)
+    restart: always             # Reinicia o container automaticamente se cair
+    environment:                # Variáveis de ambiente para configurar o MySQL
+      TZ: America/Sao_Paulo     # Define timezone do container
+      MYSQL_ROOT_PASSWORD: 1234 # Senha do usuário root do MySQL
+      MYSQL_USER: docker        # Cria um usuário adicional chamado "docker"
+      MYSQL_PASSWORD: 1234      # Senha do usuário "docker"
+      MYSQL_DATABASE: rest_with_spring_boot_erudio # Banco inicial criado automaticamente
     ports:
-      - "3308:3306"
+      - "3308:3306"             # Mapeia porta local 3308 -> porta interna 3306 (MySQL)
     networks:
-      - orangedev-network
-  rest-with-spring-boot-erudio:
-    image: orangedevhouse/rest-with-spring-boot-erudio
-    restart: always
-    build: ./rest-spring-boot-and-java-erudio
-    working_dir: /rest-spring-boot-and-java-erudio
-    environment:
-      TZ: America/Sao_Paulo
+      - orangedev-network       # Conecta o container ao network nomeado
+
+  rest-with-spring-boot-erudio: # Serviço do seu app Spring Boot
+    image: orangedevhouse/rest-with-spring-boot-erudio # Nome da imagem do app (Docker Hub)
+    restart: always             # Reinicia o container caso falhe
+    build: ./rest-spring-boot-and-java-erudio # Pasta onde está o Dockerfile para build
+    working_dir: /rest-spring-boot-and-java-erudio # Diretório dentro do container para rodar comandos
+    environment:                # Variáveis de ambiente para o Spring Boot
+      TZ: America/Sao_Paulo     # Timezone do app
       SPRING.DATASOURCE.URL: jdbc:mysql://db:3306/rest_with_spring_boot_erudio?useTimezone=true&serverTimezone=UTC
-      SPRING.DATASOURCE.USERNAME: root
-      SPRING.DATASOURCE.PASSWORD: 1234
-    command: mvn spring-boot:run
+                                # URL JDBC — "db" é o hostname do serviço MySQL no Docker network
+      SPRING.DATASOURCE.USERNAME: root # Usuário do banco
+      SPRING.DATASOURCE.PASSWORD: 1234 # Senha do banco
+    command: mvn spring-boot:run # Comando que será executado quando o container subir
     ports:
-      - 80:80
-    depends_on:
+      - 80:80                   # Porta local 80 -> porta interna 80 (expondo API)
+    depends_on:                 # Garante que o serviço DB suba antes do app
       - db
     networks:
-      - orangedev-network
+      - orangedev-network       # Conecta o app na mesma rede do DB
+
 networks:
-    orangedev-network:
-      driver: bridge
+  orangedev-network:            # Criação da rede Docker para comunicação interna
+    driver: bridge              # Tipo de rede (bridge = padrão para containers se comunicarem)
+
